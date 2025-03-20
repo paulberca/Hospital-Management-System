@@ -1,0 +1,45 @@
+.tableContainer {
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  overflow: auto;
+  max-height: calc(100vh - 170px); /* Adjust height to fit the screen minus headers and controls */
+  position: relative;
+}
+
+.patientsTable {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.patientsTable thead {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
+
+.patientsTable th {
+  background-color: #f9f9f9;
+  font-weight: 600;
+  color: #333;
+  position: sticky;
+  top: 0;
+  box-shadow: 0 1px 0 0 #eee;
+}
+
+.patientsTable th, .patientsTable td {
+  padding: 12px 15px;
+  text-align: left;
+  border-bottom: 1px solid #eee;
+}
+
+.patientsTable tr:hover {
+  background-color: #f5f5f5;
+}
+
+.noResults {
+  padding: 30px;
+  text-align: center;
+  color: #666;
+  font-style: italic;
+}
