@@ -1,24 +1,24 @@
-import React from 'react';
-import styles from './SearchControls.module.css';
+import React from "react";
+import styles from "./SearchControls.module.css";
+import SearchBox from "./SearchBox/SearchBox";
+import AddPatientButton from "./AddPatientButton/AddPatientButton";
+import AddPatientForm from "../AddPatientForm/AddPatientForm";
 
-function SearchControls({ searchTerm, onSearchChange, sortByDate, onSortToggle }) {
+function SearchControls({
+  searchTerm,
+  onSearchChange,
+  onAddPatient,
+  showAddForm,
+  onToggleAddForm,
+}) {
   return (
     <div className={styles.controls}>
-      <div className={styles.searchContainer}>
-        <input 
-          type="text" 
-          placeholder="Search patients by name..." 
-          className={styles.searchInput}
-          value={searchTerm}
-          onChange={onSearchChange}
-        />
-      </div>
-      <button 
-        className={styles.sortButton}
-        onClick={onSortToggle}
-      >
-        {sortByDate ? 'Sort by Admission Date (Descending)' : 'Sort by Admission Date (Ascending)'}
-      </button>
+      <SearchBox searchTerm={searchTerm} onSearchChange={onSearchChange} />
+      <AddPatientButton addNewPatient={onToggleAddForm} />
+
+      {showAddForm && (
+        <AddPatientForm onCancel={onToggleAddForm} onAdd={onAddPatient} />
+      )}
     </div>
   );
 }

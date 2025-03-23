@@ -11,6 +11,34 @@ function PatientsPage() {
   const [searchTerm, setSearchTerm] = useState("");
   const [sortByDate, setSortByDate] = useState(false);
   const [filteredPatients, setFilteredPatients] = useState(initialPatients);
+  const [sortConfig, setSortConfig] = useState({
+    key: "admissionDate",
+    direction: "descending",
+  });
+  const [showAddForm, setShowAddForm] = useState(false);
+
+  // Sort function for any column
+  const sortByColumn = (key) => {
+    let direction = "ascending";
+
+    // If already sorting by this key, toggle direction
+    if (sortConfig.key === key && sortConfig.direction === "ascending") {
+      direction = "descending";
+    }
+
+    setSortConfig({ key, direction });
+  };
+
+  // Toggle add patient form
+  const toggleAddForm = () => {
+    setShowAddForm(!showAddForm);
+  };
+
+  // Add new patient
+  const addPatient = (newPatient) => {
+    setPatients([...patients, newPatient]);
+    setShowAddForm(false);
+  };
 
   useEffect(() => {
     let result = [...patients];
@@ -22,26 +50,42 @@ function PatientsPage() {
       );
     }
 
-    // Sort by admission date if needed
-    if (sortByDate) {
-      result = result.sort(
-        (a, b) => new Date(a.admissionDate) - new Date(b.admissionDate)
-      );
-    } else {
-      result = result.sort(
-        (a, b) => new Date(b.admissionDate) - new Date(a.admissionDate)
-      );
+    // Sort based on sortConfig
+    if (sortConfig) {
+      result.sort((a, b) => {
+        // For date fields
+        if (
+          sortConfig.key === "admissionDate" ||
+          sortConfig.key === "dateOfBirth"
+        ) {
+          const dateA = new Date(a[sortConfig.key]);
+          const dateB = new Date(b[sortConfig.key]);
+
+          if (sortConfig.direction === "ascending") {
+            return dateA - dateB;
+          } else {
+            return dateB - dateA;
+          }
+        }
+        // For string fields
+        else {
+          const valueA = String(a[sortConfig.key]).toLowerCase();
+          const valueB = String(b[sortConfig.key]).toLowerCase();
+
+          if (sortConfig.direction === "ascending") {
+            return valueA.localeCompare(valueB);
+          } else {
+            return valueB.localeCompare(valueA);
+          }
+        }
+      });
     }
 
     setFilteredPatients(result);
-  }, [patients, searchTerm, sortByDate]);
+  }, [patients, searchTerm, sortConfig]);
 
   const handleSearch = (e) => {
     setSearchTerm(e.target.value);
-  };
-
-  const toggleSort = () => {
-    setSortByDate(!sortByDate);
   };
 
   return (
@@ -53,9 +97,15 @@ function PatientsPage() {
           searchTerm={searchTerm}
           onSearchChange={handleSearch}
           sortByDate={sortByDate}
-          onSortToggle={toggleSort}
+          showAddForm={showAddForm}
+          onToggleAddForm={toggleAddForm}
+          onAddPatient={addPatient}
         />
-        <PatientTable patients={filteredPatients} />
+        <PatientTable
+          patients={filteredPatients}
+          onSort={sortByColumn}
+          sortConfig={sortConfig}
+        />
       </div>
     </div>
   );
