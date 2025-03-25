@@ -1,10 +1,11 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import styles from "./page.module.css";
-import Sidebar from "./components/PatientsScreen/Sidebar/Sidebar";
+import Sidebar from "./components/Sidebar/Sidebar";
 import PatientTable from "./components/PatientsScreen/PatientTable/PatientTable";
 import SearchControls from "./components/PatientsScreen/SearchControls/SearchControls";
 import { initialPatients } from "./data/patientData";
+import StatsScreen from "./components/StatsScreen/StatsScreen";
 
 function PatientsPage() {
   const [patients, setPatients] = useState(initialPatients);
@@ -17,6 +18,7 @@ function PatientsPage() {
   });
   const [showAddForm, setShowAddForm] = useState(false);
   const [selectedPatient, setSelectedPatient] = useState(null);
+  const [currentPage, setCurrentPage] = useState("patients");
 
   // Sort function for any column
   const sortByColumn = (key) => {
@@ -118,27 +120,37 @@ function PatientsPage() {
     setSearchTerm(e.target.value);
   };
 
+  const handleNavigation = (page) => {
+    setCurrentPage(page);
+  };
+
   return (
     <div className={styles.container}>
-      <Sidebar />
+      <Sidebar onNavigate={handleNavigation} currentPage={currentPage} />
       <div className={styles.content}>
-        <h2 className={styles.contentTitle}>Patient List</h2>
-        <SearchControls
-          searchTerm={searchTerm}
-          onSearchChange={handleSearch}
-          sortByDate={sortByDate}
-          showAddForm={showAddForm}
-          onToggleAddForm={toggleAddForm}
-          onAddPatient={addPatient}
-          onDeletePatient={deletePatient}
-          selectedPatient={selectedPatient}
-        />
-        <PatientTable
-          patients={filteredPatients}
-          onSort={sortByColumn}
-          sortConfig={sortConfig}
-          onSelectPatient={handleSelectPatient}
-        />
+        {currentPage === "patients" ? (
+          <>
+            <h2 className={styles.contentTitle}>Patient List</h2>
+            <SearchControls
+              searchTerm={searchTerm}
+              onSearchChange={handleSearch}
+              sortByDate={sortByDate}
+              showAddForm={showAddForm}
+              onToggleAddForm={toggleAddForm}
+              onAddPatient={addPatient}
+              onDeletePatient={deletePatient}
+              selectedPatient={selectedPatient}
+            />
+            <PatientTable
+              patients={filteredPatients}
+              onSort={sortByColumn}
+              sortConfig={sortConfig}
+              onSelectPatient={handleSelectPatient}
+            />
+          </>
+        ) : (
+          <StatsScreen patients={patients} />
+        )}
       </div>
     </div>
   );
