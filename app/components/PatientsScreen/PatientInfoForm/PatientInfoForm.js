@@ -1,7 +1,7 @@
-import React, { useState } from "react";
-import styles from "./AddPatientForm.module.css";
+import React, { useState, useEffect } from "react";
+import styles from "./PatientInfoForm.module.css";
 
-function AddPatientForm({ onCancel, onAdd }) {
+function AddPatientForm({ onCancel, onAdd, onDelete, selectedPatient }) {
   const [formData, setFormData] = useState({
     name: "",
     dateOfBirth: "",
@@ -16,37 +16,127 @@ function AddPatientForm({ onCancel, onAdd }) {
     condition: "",
   });
 
+  const [errors, setErrors] = useState({
+    dateOfBirth: "",
+  });
+
+  // Populate form when editing an existing patient
+  useEffect(() => {
+    if (selectedPatient) {
+      const allergiesString = Array.isArray(selectedPatient.allergies)
+        ? selectedPatient.allergies.join(", ")
+        : selectedPatient.allergies;
+
+      setFormData({
+        name: selectedPatient.name || "",
+        dateOfBirth: selectedPatient.dateOfBirth || "",
+        gender: selectedPatient.gender || "",
+        contactNumber: selectedPatient.contactNumber || "",
+        homeAddress: selectedPatient.homeAddress || "",
+        allergies: allergiesString || "",
+        bloodType: selectedPatient.bloodType || "",
+        chronicCondition: selectedPatient.chronicCondition || "",
+        familyDoctor: selectedPatient.familyDoctor || "",
+        insurance: selectedPatient.insurance || "",
+        condition: selectedPatient.condition || "",
+      });
+
+      // Validate pre-filled date of birth
+      if (selectedPatient.dateOfBirth) {
+        validateDateOfBirth(selectedPatient.dateOfBirth);
+      }
+    }
+  }, [selectedPatient]);
+
+  const validateDateOfBirth = (dateString) => {
+    if (!dateString) return "";
+
+    const dob = new Date(dateString);
+    const today = new Date();
+
+    // Check if date is in the future
+    if (dob > today) {
+      return "Date of birth cannot be in the future";
+    }
+
+    // Check if age is reasonable (less than 120 years)
+    const maxAge = 120;
+    const minDate = new Date();
+    minDate.setFullYear(today.getFullYear() - maxAge);
+
+    if (dob < minDate) {
+      return "Patient age exceeds 120 years, please verify";
+    }
+
+    return "";
+  };
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({
       ...formData,
       [name]: value,
     });
+
+    // Validate date of birth when it changes
+    if (name === "dateOfBirth") {
+      const errorMessage = validateDateOfBirth(value);
+      setErrors({
+        ...errors,
+        dateOfBirth: errorMessage,
+      });
+    }
+  };
+
+  const handleDelete = () => {
+    if (
+      selectedPatient &&
+      window.confirm("Are you sure you want to delete this patient?")
+    ) {
+      onDelete(selectedPatient.id);
+    }
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
+
+    // Check for validation errors before submitting
+    const dobError = validateDateOfBirth(formData.dateOfBirth);
+    if (dobError) {
+      setErrors({
+        ...errors,
+        dateOfBirth: dobError,
+      });
+      return;
+    }
 
     // Format allergies as an array
     const allergiesArray = formData.allergies
       ? formData.allergies.split(",").map((item) => item.trim())
       : ["None"];
 
-    // Add current date as admission date and generate id
-    const newPatient = {
+    const patientData = {
       ...formData,
-      id: Date.now(), // Use timestamp as id
       allergies: allergiesArray,
-      admissionDate: new Date().toISOString().split("T")[0], // Current date in YYYY-MM-DD format
     };
 
-    onAdd(newPatient);
+    // If we're adding a new patient, add id and admission date
+    if (!selectedPatient) {
+      patientData.id = Date.now(); // Use timestamp as id
+      patientData.admissionDate = new Date().toISOString().split("T")[0]; // Current date in YYYY-MM-DD format
+    } else {
+      // Preserve original id and admission date for existing patients
+      patientData.id = selectedPatient.id;
+      patientData.admissionDate = selectedPatient.admissionDate;
+    }
+
+    onAdd(patientData);
   };
 
   return (
     <div className={styles.overlay}>
       <div className={styles.popup}>
-        <h2>Add New Patient</h2>
+        <h2>{selectedPatient ? "Edit Patient" : "Add New Patient"}</h2>
         <form onSubmit={handleSubmit}>
           <div className={styles.formGrid}>
             <div className={styles.formGroup}>
@@ -70,7 +160,13 @@ function AddPatientForm({ onCancel, onAdd }) {
                 required
                 value={formData.dateOfBirth}
                 onChange={handleChange}
+                className={errors.dateOfBirth ? styles.inputError : ""}
               />
+              {errors.dateOfBirth && (
+                <span className={styles.errorMessage}>
+                  {errors.dateOfBirth}
+                </span>
+              )}
             </div>
 
             <div className={styles.formGroup}>
@@ -193,15 +289,25 @@ function AddPatientForm({ onCancel, onAdd }) {
           </div>
 
           <div className={styles.buttonGroup}>
-            <button
-              type="button"
-              className={styles.cancelButton}
-              onClick={onCancel}
-            >
-              Cancel
-            </button>
+            {selectedPatient ? (
+              <button
+                type="button"
+                className={styles.cancelButton}
+                onClick={handleDelete}
+              >
+                Delete Patient
+              </button>
+            ) : (
+              <button
+                type="button"
+                className={styles.cancelButton}
+                onClick={onCancel}
+              >
+                Cancel
+              </button>
+            )}
             <button type="submit" className={styles.addButton}>
-              Add Patient
+              {selectedPatient ? "Update Patient" : "Add Patient"}
             </button>
           </div>
         </form>

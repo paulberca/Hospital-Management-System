@@ -16,6 +16,7 @@ function PatientsPage() {
     direction: "descending",
   });
   const [showAddForm, setShowAddForm] = useState(false);
+  const [selectedPatient, setSelectedPatient] = useState(null);
 
   // Sort function for any column
   const sortByColumn = (key) => {
@@ -32,12 +33,41 @@ function PatientsPage() {
   // Toggle add patient form
   const toggleAddForm = () => {
     setShowAddForm(!showAddForm);
+    if (showAddForm) {
+      setSelectedPatient(null);
+    }
   };
 
-  // Add new patient
-  const addPatient = (newPatient) => {
-    setPatients([...patients, newPatient]);
+  // Handle patient selection
+  const handleSelectPatient = (patient) => {
+    setSelectedPatient(patient);
+    setShowAddForm(true);
+  };
+
+  // Delete patient function
+  const deletePatient = (id) => {
+    const updatedPatients = patients.filter((patient) => patient.id !== id);
+    setPatients(updatedPatients);
     setShowAddForm(false);
+    setSelectedPatient(null);
+  };
+
+  // Add or update patient
+  const addPatient = (patientData) => {
+    if (selectedPatient) {
+      // Update existing patient
+      const updatedPatients = patients.map((patient) =>
+        patient.id === selectedPatient.id
+          ? { ...patient, ...patientData }
+          : patient
+      );
+      setPatients(updatedPatients);
+    } else {
+      // Add new patient
+      setPatients([...patients, patientData]);
+    }
+    setShowAddForm(false);
+    setSelectedPatient(null);
   };
 
   useEffect(() => {
@@ -100,11 +130,14 @@ function PatientsPage() {
           showAddForm={showAddForm}
           onToggleAddForm={toggleAddForm}
           onAddPatient={addPatient}
+          onDeletePatient={deletePatient}
+          selectedPatient={selectedPatient}
         />
         <PatientTable
           patients={filteredPatients}
           onSort={sortByColumn}
           sortConfig={sortConfig}
+          onSelectPatient={handleSelectPatient}
         />
       </div>
     </div>

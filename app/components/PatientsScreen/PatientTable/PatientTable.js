@@ -1,7 +1,7 @@
 import React from "react";
 import styles from "./PatientTable.module.css";
 
-function PatientTable({ patients, onSort, sortConfig }) {
+function PatientTable({ patients, onSort, sortConfig, onSelectPatient }) {
   const getHeaderClassName = (column) => {
     if (!sortConfig) return styles.sortable;
 
@@ -24,24 +24,15 @@ function PatientTable({ patients, onSort, sortConfig }) {
               Name
               <span className={styles.sortIcon}></span>
             </th>
-            <th
-              className={getHeaderClassName("gender")}
-              onClick={() => onSort("gender")}
-            >
+            <th className={styles.notSortable}>
               Gender
               <span className={styles.sortIcon}></span>
             </th>
-            <th
-              className={getHeaderClassName("contactNumber")}
-              onClick={() => onSort("contactNumber")}
-            >
+            <th className={styles.notSortable}>
               Contact Number
               <span className={styles.sortIcon}></span>
             </th>
-            <th
-              className={getHeaderClassName("bloodType")}
-              onClick={() => onSort("bloodType")}
-            >
+            <th className={styles.notSortable}>
               Blood Type
               <span className={styles.sortIcon}></span>
             </th>
@@ -63,7 +54,11 @@ function PatientTable({ patients, onSort, sortConfig }) {
         </thead>
         <tbody>
           {patients.map((patient) => (
-            <tr key={patient.id}>
+            <tr
+              key={patient.id}
+              onClick={() => onSelectPatient(patient)}
+              className={styles.patientRow}
+            >
               <td>{patient.name}</td>
               <td>{patient.gender}</td>
               <td>{patient.contactNumber}</td>
