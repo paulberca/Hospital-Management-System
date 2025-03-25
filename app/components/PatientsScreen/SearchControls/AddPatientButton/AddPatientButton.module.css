@@ -1,0 +1,14 @@
+.addPatient {
+  padding: 10px 30px;
+  background-color: #2e7d32;
+  color: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.addPatient:hover {
+  background-color: #276428;
+}
