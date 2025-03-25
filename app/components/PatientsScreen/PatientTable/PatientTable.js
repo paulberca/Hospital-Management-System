@@ -12,6 +12,21 @@ function PatientTable({ patients, onSort, sortConfig, onSelectPatient }) {
       : styles.sortable;
   };
 
+  // Determine if we should color rows by condition (when sorting by condition)
+  const colorRowsByCondition = sortConfig && sortConfig.key === "condition";
+
+  // Get row class based on condition and sorting state
+  const getRowClassName = (patient) => {
+    let className = styles.patientRow;
+
+    if (colorRowsByCondition) {
+      const conditionClass = `${patient.condition.toLowerCase()}Row`;
+      className = `${className} ${styles[conditionClass]}`;
+    }
+
+    return className;
+  };
+
   return (
     <div className={styles.tableContainer}>
       <table className={styles.patientsTable}>
@@ -57,7 +72,7 @@ function PatientTable({ patients, onSort, sortConfig, onSelectPatient }) {
             <tr
               key={patient.id}
               onClick={() => onSelectPatient(patient)}
-              className={styles.patientRow}
+              className={getRowClassName(patient)}
             >
               <td>{patient.name}</td>
               <td>{patient.gender}</td>

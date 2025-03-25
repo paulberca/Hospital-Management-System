@@ -101,6 +101,41 @@
   font-weight: 500;
 }
 
+/* Condition background styling for rows */
+.stableRow {
+  background-color: #2e7d32;
+  color: white;
+}
+
+.criticalRow {
+  background-color: #c62828;
+  color: white;
+}
+
+.recoveringRow {
+  background-color: #f57c00;
+  color: white;
+}
+
+.stableRow .stable,
+.criticalRow .critical,
+.recoveringRow .recovering {
+  color: white;
+}
+
+/* When hovering on condition-colored rows */
+.stableRow:hover {
+  background-color: rgba(46, 125, 50, 0.1);
+}
+
+.criticalRow:hover {
+  background-color: rgba(198, 40, 40, 0.1);
+}
+
+.recoveringRow:hover {
+  background-color: rgba(245, 124, 0, 0.1);
+}
+
 .patientRow {
   cursor: pointer;
   transition: background-color 0.2s;
