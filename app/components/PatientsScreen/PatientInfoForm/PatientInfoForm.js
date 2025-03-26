@@ -30,15 +30,15 @@ function AddPatientForm({ onCancel, onAdd, onDelete, selectedPatient }) {
       setFormData({
         name: selectedPatient.name || "",
         dateOfBirth: selectedPatient.dateOfBirth || "",
-        gender: selectedPatient.gender || "",
+        gender: selectedPatient.gender || "Male",
         contactNumber: selectedPatient.contactNumber || "",
         homeAddress: selectedPatient.homeAddress || "",
         allergies: allergiesString || "",
-        bloodType: selectedPatient.bloodType || "",
+        bloodType: selectedPatient.bloodType || "O+",
         chronicCondition: selectedPatient.chronicCondition || "",
         familyDoctor: selectedPatient.familyDoctor || "",
         insurance: selectedPatient.insurance || "",
-        condition: selectedPatient.condition || "",
+        condition: selectedPatient.condition || "Stable",
       });
 
       // Validate pre-filled date of birth
@@ -180,7 +180,6 @@ function AddPatientForm({ onCancel, onAdd, onDelete, selectedPatient }) {
               >
                 <option value="Male">Male</option>
                 <option value="Female">Female</option>
-                <option value="Other">Other</option>
               </select>
             </div>
 

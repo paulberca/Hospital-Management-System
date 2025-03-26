@@ -20,7 +20,8 @@
   margin-bottom: 5px;
 }
 
-.navLink, .navLinkActive {
+.navLink,
+.navLinkActive {
   display: block;
   padding: 12px 25px;
   color: rgba(255, 255, 255, 0.9);
