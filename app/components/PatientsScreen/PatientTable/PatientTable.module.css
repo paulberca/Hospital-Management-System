@@ -124,16 +124,16 @@
 }
 
 /* When hovering on condition-colored rows */
-.stableRow:hover {
-  background-color: rgba(46, 125, 50, 0.1);
+.patientsTable tr.stableRow:hover {
+  background-color: rgba(46, 125, 50, 0.8);
 }
 
-.criticalRow:hover {
-  background-color: rgba(33, 150, 243, 0.1); /* Changed to blue */
+.patientsTable tr.criticalRow:hover {
+  background-color: rgba(198, 40, 40, 0.8);
 }
 
-.recoveringRow:hover {
-  background-color: rgba(245, 124, 0, 0.1);
+.patientsTable tr.recoveringRow:hover {
+  background-color: rgba(245, 124, 0, 0.8);
 }
 
 .patientRow {
