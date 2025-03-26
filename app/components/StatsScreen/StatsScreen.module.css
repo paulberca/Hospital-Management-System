@@ -43,6 +43,7 @@
 }
 
 .chartContainer {
+  gap: 20px;
   background-color: white;
   border-radius: 8px;
   padding: 20px;
@@ -54,6 +55,14 @@
   color: #333;
   margin-bottom: 20px;
   text-align: center;
+}
+
+.chartWrapper {
+  height: 250px;
+  width: 100%;
+  margin-bottom: 20px;
+  display: flex;
+  justify-content: center;
 }
 
 .conditionStats,

@@ -1,5 +1,10 @@
 import React from "react";
+import { Pie } from "react-chartjs-2";
+import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
 import styles from "./StatsScreen.module.css";
+
+// Register required Chart.js components
+ChartJS.register(ArcElement, Tooltip, Legend);
 
 function StatsScreen({ patients }) {
   // Calculate statistics from patient data
@@ -45,6 +50,33 @@ function StatsScreen({ patients }) {
 
   const stats = calculateStats();
 
+  // Data for condition pie chart
+  const conditionData = {
+    labels: ["Stable", "Recovering", "Critical"],
+    datasets: [
+      {
+        data: [
+          stats.conditionCounts.stable || 0,
+          stats.conditionCounts.recovering || 0,
+          stats.conditionCounts.critical || 0,
+        ],
+        backgroundColor: ["#2e7d32", "#f57c00", "#c62828"],
+        borderWidth: 1,
+      },
+    ],
+  };
+
+  // Chart options
+  const chartOptions = {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: {
+        position: "bottom",
+      },
+    },
+  };
+
   return (
     <div className={styles.statsContainer}>
       <h2 className={styles.statsTitle}>Hospital Statistics</h2>
@@ -69,7 +101,10 @@ function StatsScreen({ patients }) {
       <div className={styles.chartSection}>
         <div className={styles.chartContainer}>
           <h3>Patients by Condition</h3>
-          <div className={styles.conditionStats}>
+          <div className={styles.chartWrapper}>
+            <Pie data={conditionData} options={chartOptions} />
+          </div>
+          {/* <div className={styles.conditionStats}>
             <div className={styles.statRow}>
               <span>Stable</span>
               <div className={styles.statBar}>
@@ -118,11 +153,14 @@ function StatsScreen({ patients }) {
               </div>
               <span>{stats.conditionCounts.critical || 0}</span>
             </div>
-          </div>
+          </div> */}
         </div>
 
         <div className={styles.chartContainer}>
           <h3>Patients by Gender</h3>
+          {/* <div className={styles.chartWrapper}>
+            <Pie data={genderData} options={chartOptions} />
+          </div> */}
           <div className={styles.genderStats}>
             <div className={styles.statRow}>
               <span>Male</span>
