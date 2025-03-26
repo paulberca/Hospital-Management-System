@@ -1,7 +1,15 @@
 import React from "react";
 import styles from "./PatientTable.module.css";
 
-function PatientTable({ patients, onSort, sortConfig, onSelectPatient }) {
+function PatientTable({
+  patients,
+  onSort,
+  sortConfig,
+  onSelectPatient,
+  currentPage = 1,
+  patientsPerPage = 8,
+  onPageChange,
+}) {
   const getHeaderClassName = (column) => {
     if (!sortConfig) return styles.sortable;
 
@@ -26,6 +34,21 @@ function PatientTable({ patients, onSort, sortConfig, onSelectPatient }) {
 
     return className;
   };
+
+  // Calculate pagination values
+  const indexOfLastPatient = currentPage * patientsPerPage;
+  const indexOfFirstPatient = indexOfLastPatient - patientsPerPage;
+  const currentPatients = patients.slice(
+    indexOfFirstPatient,
+    indexOfLastPatient
+  );
+  const totalPages = Math.ceil(patients.length / patientsPerPage);
+
+  // Generate page numbers
+  const pageNumbers = [];
+  for (let i = 1; i <= totalPages; i++) {
+    pageNumbers.push(i);
+  }
 
   return (
     <div className={styles.tableContainer}>
@@ -68,7 +91,7 @@ function PatientTable({ patients, onSort, sortConfig, onSelectPatient }) {
           </tr>
         </thead>
         <tbody>
-          {patients.map((patient) => (
+          {currentPatients.map((patient) => (
             <tr
               key={patient.id}
               onClick={() => onSelectPatient(patient)}
@@ -90,6 +113,44 @@ function PatientTable({ patients, onSort, sortConfig, onSelectPatient }) {
       {patients.length === 0 && (
         <div className={styles.noResults}>
           No patients found matching your search criteria.
+        </div>
+      )}
+
+      {/* Pagination Controls */}
+      {patients.length > 0 && totalPages > 1 && (
+        <div className={styles.pagination}>
+          <button
+            onClick={() => onPageChange(currentPage - 1)}
+            disabled={currentPage === 1}
+            className={styles.paginationButton}
+          >
+            Previous
+          </button>
+
+          {pageNumbers.map((number) => (
+            <button
+              key={number}
+              onClick={() => onPageChange(number)}
+              className={`${styles.paginationButton} ${
+                currentPage === number ? styles.activePage : ""
+              }`}
+            >
+              {number}
+            </button>
+          ))}
+
+          <button
+            onClick={() => onPageChange(currentPage + 1)}
+            disabled={currentPage === totalPages}
+            className={styles.paginationButton}
+          >
+            Next
+          </button>
+
+          <span className={styles.paginationInfo}>
+            Page {currentPage} of {totalPages} ({patients.length} total
+            patients)
+          </span>
         </div>
       )}
     </div>

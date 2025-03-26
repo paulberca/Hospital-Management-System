@@ -129,7 +129,7 @@
 }
 
 .criticalRow:hover {
-  background-color: rgba(198, 40, 40, 0.1);
+  background-color: rgba(33, 150, 243, 0.1); /* Changed to blue */
 }
 
 .recoveringRow:hover {
@@ -143,4 +143,51 @@
 
 .patientRow:hover {
   background-color: #f0f0f0;
+}
+
+/* Pagination controls */
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 20px;
+  padding: 10px;
+  gap: 8px;
+}
+
+.paginationButton {
+  padding: 6px 12px;
+  background-color: white;
+  color: #2e7d32;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-size: 14px;
+}
+
+.paginationButton:hover:not(:disabled) {
+  background-color: #f0f0f0;
+  border-color: #bbb;
+}
+
+.paginationButton:disabled {
+  color: #8b8b8b;
+  cursor: not-allowed;
+}
+
+.activePage {
+  background-color: #2e7d32;
+  color: white;
+  border-color: #2e7d32;
+}
+
+.paginationButton.activePage:hover {
+  background-color: #276428;
+}
+
+.paginationInfo {
+  margin-left: 15px;
+  color: #666;
+  font-size: 14px;
 }

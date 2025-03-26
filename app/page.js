@@ -22,6 +22,13 @@ function PatientsPage() {
   const [sortConfig, setSortConfig] = useState(null);
   const [showAddForm, setShowAddForm] = useState(false);
   const [selectedPatient, setSelectedPatient] = useState(null);
+  const [patientsPage, setPatientsPage] = useState(1);
+  const patientsPerPage = 8; // Number of patients to show per page
+
+  // Handle page change
+  const handlePageChange = (pageNumber) => {
+    setPatientsPage(pageNumber);
+  };
 
   // Toggle add patient form
   const toggleAddForm = () => {
@@ -93,6 +100,11 @@ function PatientsPage() {
   // Get the filtered patients
   const filteredPatients = getFilteredPatients();
 
+  // Reset to first page when filters change
+  useEffect(() => {
+    setPatientsPage(1);
+  }, [searchTerm, sortConfig]);
+
   return (
     <div className={styles.container}>
       <Sidebar onNavigate={setCurrentPage} currentPage={currentPage} />
@@ -114,6 +126,9 @@ function PatientsPage() {
               onSort={sortByColumn}
               sortConfig={sortConfig}
               onSelectPatient={handleSelectPatient}
+              currentPage={patientsPage}
+              patientsPerPage={patientsPerPage}
+              onPageChange={handlePageChange}
             />
           </>
         ) : (
