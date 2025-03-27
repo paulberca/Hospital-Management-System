@@ -29,11 +29,12 @@ export const deletePatient = (patients, patientId) => {
 
 // Filter patients by search term
 export const filterPatients = (patients, searchTerm) => {
-  if (!searchTerm) return patients;
-
-  return patients.filter((patient) =>
-    patient.name.toLowerCase().includes(searchTerm.toLowerCase().trim())
-  );
+  if (searchTerm) {
+    return patients.filter((patient) =>
+      patient.name.toLowerCase().includes(searchTerm.toLowerCase().trim())
+    );
+  }
+  return patients;
 };
 
 // Sort patients by a specific column

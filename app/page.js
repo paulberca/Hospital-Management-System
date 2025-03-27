@@ -105,6 +105,10 @@ function PatientsPage() {
     setPatientsPage(1);
   }, [searchTerm, sortConfig]);
 
+  const handleSearch = (e) => {
+    setSearchTerm(e.target.value);
+  };
+
   return (
     <div className={styles.container}>
       <Sidebar onNavigate={setCurrentPage} currentPage={currentPage} />
@@ -114,7 +118,7 @@ function PatientsPage() {
             <h1 className={styles.contentTitle}>Patients Management</h1>
             <SearchControls
               searchTerm={searchTerm}
-              onSearchChange={setSearchTerm}
+              onSearchChange={handleSearch}
               onAddPatient={addPatient}
               onDeletePatient={deletePatient}
               showAddForm={showAddForm}
