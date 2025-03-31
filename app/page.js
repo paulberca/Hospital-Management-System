@@ -73,7 +73,7 @@ function PatientsPage() {
   useEffect(() => {
     // Load initial patients data
     setPatients(initialPatients);
-  }, []);
+  }, [initialPatients]); // Add initialPatients as a dependency
 
   // Sort patients data when column header is clicked
   const sortByColumn = (key) => {

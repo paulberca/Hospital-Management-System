@@ -1,6 +1,7 @@
 import json
 import random
 import os
+import time
 from datetime import datetime, timedelta
 from faker import Faker
 
@@ -69,7 +70,7 @@ def generate_patients(count=20):
     return patients
 
 def save_to_js_file(patients, output_path):
-    """Save the generated patients to a JavaScript file"""
+    """Save the generated patients to a JavaScript file all at once"""
     # Format the patients array as pretty-printed JSON
     patients_json = json.dumps(patients, indent=2)
     
@@ -81,6 +82,56 @@ def save_to_js_file(patients, output_path):
         f.write(js_content)
     
     print(f"✅ Generated {len(patients)} patient records and saved to {output_path}")
+
+def initialize_js_file(output_path):
+    """Create a new JavaScript file with an empty patients array"""
+    js_content = "export const initialPatients = [];\n"
+    os.makedirs(os.path.dirname(output_path), exist_ok=True)
+    with open(output_path, 'w') as f:
+        f.write(js_content)
+    print(f"✅ Initialized empty patient file at {output_path}")
+
+def add_patient_to_js_file(patient, output_path):
+    """Add a single patient to the JavaScript file"""
+    if not os.path.exists(output_path):
+        initialize_js_file(output_path)
+    
+    # Read the current file content
+    with open(output_path, 'r') as f:
+        content = f.read()
+    
+    # Extract the current patients array
+    try:
+        # Find the array in the file
+        start_idx = content.find("[")
+        end_idx = content.rfind("]")
+        
+        if start_idx == -1 or end_idx == -1:
+            # If the array structure isn't found, initialize the file
+            initialize_js_file(output_path)
+            current_patients = []
+        else:
+            patients_json = content[start_idx:end_idx+1]
+            current_patients = json.loads(patients_json)
+    except json.JSONDecodeError:
+        # If there's an issue with the JSON, initialize the file
+        initialize_js_file(output_path)
+        current_patients = []
+    
+    # Add the new patient
+    current_patients.append(patient)
+    
+    # Format the updated patients array as pretty-printed JSON
+    updated_patients_json = json.dumps(current_patients, indent=2)
+    
+    # Create the JavaScript content
+    js_content = f"export const initialPatients = {updated_patients_json};\n"
+    
+    # Write to the file
+    with open(output_path, 'w') as f:
+        f.write(js_content)
+    
+    print(f"✅ Added patient: {patient['name']} (ID: {patient['id']})")
 
 if __name__ == "__main__":
     import sys
@@ -101,9 +152,21 @@ if __name__ == "__main__":
     if len(sys.argv) > 2:
         output_path = sys.argv[2]
     
-    # Generate and save patients
+    # Generate patients one by one and add them to the file
     patients = generate_patients(count)
-    save_to_js_file(patients, output_path)
+    
+    # Initialize the file (will clear existing data)
+    initialize_js_file(output_path)
+    
+    print(f"\nAdding {count} patients one by one to {output_path}...")
+    for i, patient in enumerate(patients):
+        # Add a slight delay to visualize the process
+        time.sleep(0.5)
+        add_patient_to_js_file(patient, output_path)
+        # Show progress
+        print(f"Progress: {i+1}/{count} patients added")
+    
+    print(f"\n✅ Successfully added {count} patients to {output_path}")
     
     # Print a sample patient
     print("\nSample patient:")
